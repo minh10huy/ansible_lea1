@@ -1,0 +1,28 @@
+- hosts: centos
+  remote_user: root
+  tasks:
+  ### Install httpd package and start
+  - name: Install HTTPD
+    yum: name=httpd state=latest
+  - name: Start HTTPD
+    service: name=httpd state=started
+  ### Deploy config
+  #backup
+  - name: Backup config HTTP
+    command: cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.huytd
+  #Deploy
+  - name: Deploy config httpd
+    template:
+      src: "./etc/httpd/conf/httpd.conf"
+      dest: "/etc/httpd/conf/httpd.conf"
+      owner: root
+      group: root
+      mode: 0644
+  ### Pull source
+  - name: Deploy index file
+    template:
+      src: "./var/www/html/index.html"
+      dest: "/var/www/html/index.html"
+  ### Restart HTTPD for apply configure
+  - name: Restart HTTPD 
+    service: name=httpd state=restarted

@@ -1,0 +1,18 @@
+---
+- hosts: centos
+  sudo: yes
+  
+  tasks:
+    - name: Install HTTPD
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - php
+    - name: Restart HTTPD
+      service:
+        name: "{{item}}"
+        state: started
+      with_items:
+        - httpd

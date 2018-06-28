@@ -1,0 +1,33 @@
+---
+- hosts: centos
+  sudo: yes
+  
+  vars:
+    - index_file: "index.html"
+    - config_file: "httpd.conf"
+  
+  tasks:
+    - name: Install HTTPD
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - php
+    - name: Configure HTTPD
+      template:
+        src: "./etc/httpd/conf/{{config_file}}"
+        dest: "/etc/httpd/conf/httpd.conf"
+      notify: Restart HTTPD
+    - name: Deploy html file
+      template:
+        src: "./var/www/html/{{index_file}}"
+        dest: "/var/www/html/index.html"
+      notify: Restart HTTPD
+  handlers:
+    - name: Restart HTTPD
+      service:
+        name: "{{item}}"
+        state: started
+      with_items:
+        - httpd

@@ -1,0 +1,22 @@
+---
+- hosts: all
+  sudo: yes
+  
+  tasks:
+    - name: Define Red Hat
+      set_fact:
+        package_name: "httpd"
+      when:
+        ansible_os_family == "Red Had"
+
+    - name: Define Debian
+      set_fact:
+        package_name: "apache2"
+      when:
+        ansible_os_family == "Debian"
+
+    - name: Stop apache
+      service:
+        name: "{{package_name}}"
+        state: stopped
+

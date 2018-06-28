@@ -1,0 +1,24 @@
+---
+- hosts: centos
+  sudo: yes
+  
+  tasks:
+    - name: Install HTTPD
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - php
+    - name: Deploy html file
+      template:
+        src: "./etc/httpd/conf/httpd.conf"
+        dest: "/etc/httpd/conf/httpd.conf"
+      notify: Restart HTTPD
+  handlers:
+    - name: Restart HTTPD
+      service:
+        name: "{{item}}"
+        state: started
+      with_items:
+        - httpd
